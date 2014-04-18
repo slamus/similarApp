@@ -1,0 +1,77 @@
+<div id="panel">
+	<div id="search" class="top">
+	<form ng-submit="submit()">
+		<input id="websiteInput" name="website" ng-model="text" type="text" placeholder="yourwebsite.com" focus/>
+		<input hidden type="submit" id="submit" value="Submit" />
+	</form>
+	</div>
+	<div id="history">
+		<ul>
+			<li ng-repeat="elem in history | orderBy:'isCurrent':true ">
+				<a href="#/{{elem.url}}" ng-class="{'active': elem.isCurrent}" >{{elem.url}}
+				</a>
+				<div ng-click="deleteCookies(elem, $index)" class="delete_button">x</div>		
+			</li>
+		</ul>
+	</div>
+</div>
+
+<div ng-if="!error && !result">
+<img id="loading" src="img/loading.gif">
+</div>
+
+<div id="content">
+
+<div ng-if="!error && !result">
+	<div id="title" class="top">
+	</div>
+	<div id="details">
+	</div>
+</div>
+
+<div ng-if="!error && result">
+	<div id="title" class="top">
+		<div class="left">
+			<div id="site_name">{{result.query}}</div>
+			<div class="site_link">
+				<img class="favicon" ng-src="{{result.FavIcon}}"/>
+				<a href="http://{{result.query}}">{{result.query}}</a>
+			</div>
+		</div>
+		<div class="right">
+			ranked
+			<div id="site_rank">#{{result.GlobalRank}}</div>
+			globally,
+			<div id="site_category_rank">#{{result.CategoryRank}}</div>
+			in
+			<div id="site_category_name">{{result.Category}}</div>
+		</div>
+	</div>	
+	<div id="details">
+		<h2>Similar Websites</h2>
+		<div id="similar" ng-init="obj={limit:12}">
+			<div class="site_link" ng-repeat="site in result.SimilarSites | limitTo:obj.limit">
+				<img class="favicon" ng-src="{{site.FavIcon}}"/>
+				<a href="http://www.{{site.Url}}">{{site.Url}}</a>
+			</div>
+			<div ng-if="result.SimilarSites.length > 12 && obj.limit == 12" ng-click="obj.limit = result.SimilarSites.length" class="show_more">Show More ({{result.SimilarSites.length - 12}})</div>
+			<div ng-if="result.SimilarSites.length > 12 && obj.limit > 12" ng-click="obj.limit = 12" class="show_more">Hide</div>
+		</div>
+		<h2>IFramed {{result.query}}</h2>
+		<div id="preview">
+		<iframe ng-src="{{result.iframeUrl}}"></iframe>
+		</div>
+	</div>
+</div>
+
+<div ng-if="error">
+	<div id="title" class="top">
+		<h2 ng-if="!query || (history && history.length == 0)"><= Enter URL Here</h3>
+	</div>	
+	<div id="details">
+		<h2 ng-if="query">The website {{query}} has no data to display =/</h2>
+	</div>
+</div>
+
+</div>
+
